@@ -1,0 +1,46 @@
+@startuml Patterns Structure
+
+' Command Pattern
+package "Command Pattern" {
+    interface Command {
+        +execute()
+        +undo()
+    }
+    class BorrowBookCommand
+    class ReturnBookCommand
+    Command <|.. BorrowBookCommand
+    Command <|.. ReturnBookCommand
+}
+
+' Observer Pattern
+package "Observer Pattern" {
+    interface Observer {
+        +update(Book)
+    }
+    class BookStatusObserver
+    Observer <|.. BookStatusObserver
+}
+
+' Strategy Pattern
+package "Strategy Pattern" {
+    interface SearchStrategy {
+        +search(List<Book>, String)
+    }
+    class TitleSearchStrategy
+    class IsbnSearchStrategy
+    class AuthorSearchStrategy
+    SearchStrategy <|.. TitleSearchStrategy
+    SearchStrategy <|.. IsbnSearchStrategy
+    SearchStrategy <|.. AuthorSearchStrategy
+}
+
+' Decorator Pattern
+package "Decorator Pattern" {
+    interface BookInterface
+    class BookDecorator
+    class StatisticsBookDecorator
+    BookInterface <|.. BookDecorator
+    BookDecorator <|-- StatisticsBookDecorator
+}
+
+@enduml

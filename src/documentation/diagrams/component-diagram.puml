@@ -1,0 +1,47 @@
+@startuml Component Diagram
+
+package "Application Layer" {
+    [LibraryFacade]
+}
+
+package "Domain Layer" {
+    package "Models" {
+        [Book]
+    }
+    
+    package "Patterns" {
+        package "Command" {
+            [BorrowBookCommand]
+            [ReturnBookCommand]
+        }
+        
+        package "Observer" {
+            [BookStatusObserver]
+        }
+        
+        package "Strategy" {
+            [SearchStrategies]
+        }
+        
+        package "Decorator" {
+            [BookDecorator]
+            [StatisticsDecorator]
+        }
+    }
+}
+
+package "Infrastructure Layer" {
+    [Library]
+}
+
+[LibraryFacade] --> [Library]
+[LibraryFacade] --> [SearchStrategies]
+[Library] --> [Book]
+[Library] --> [BorrowBookCommand]
+[Library] --> [ReturnBookCommand]
+[Library] --> [BookStatusObserver]
+[StatisticsDecorator] --> [Book]
+[BorrowBookCommand] --> [Book]
+[ReturnBookCommand] --> [Book]
+
+@enduml

@@ -1,0 +1,110 @@
+@startuml Library System Class Diagram
+
+' Interfaces
+interface BookInterface {
+    +getTitle(): String
+    +getAuthor(): String
+    +getIsbn(): String
+    +getPageCount(): int
+    +isBorrowed(): boolean
+    +setBorrowed(boolean): void
+}
+
+interface Command {
+    +execute(): void
+    +undo(): void
+}
+
+interface Observer {
+    +update(Book): void
+}
+
+interface SearchStrategy {
+    +search(List<Book>, String): List<Book>
+}
+
+' Core Classes
+class Book {
+    -title: String
+    -author: String
+    -isbn: String
+    -pageCount: int
+    -isBorrowed: boolean
+}
+
+class Library {
+    -instance: Library
+    -books: List<StatisticsBookDecorator>
+    -observers: List<Observer>
+    -commandHistory: Stack<Command>
+    +getInstance(): Library
+    +addBook(Book): void
+    +executeCommand(Command): void
+}
+
+class LibraryFacade {
+    -library: Library
+    -titleSearchStrategy: SearchStrategy
+    -isbnSearchStrategy: SearchStrategy
+    -authorSearchStrategy: SearchStrategy
+    +borrowBook(String): void
+    +returnBook(String): void
+    +searchByTitle(String): List<Book>
+}
+
+' Pattern Implementations
+class BookDecorator {
+    #book: Book
+    +getTitle(): String
+    +getAuthor(): String
+}
+
+class StatisticsBookDecorator {
+    -borrowCount: int
+    -lastBorrowed: LocalDateTime
+    -lastReturned: LocalDateTime
+    +getBorrowCount(): int
+}
+
+class BorrowBookCommand {
+    -book: Book
+    -library: Library
+    +execute(): void
+    +undo(): void
+}
+
+class ReturnBookCommand {
+    -book: Book
+    -library: Library
+    +execute(): void
+    +undo(): void
+}
+
+class BookStatusObserver {
+    +update(Book): void
+}
+
+class TitleSearchStrategy {
+    +search(List<Book>, String): List<Book>
+}
+
+' Relationships
+Book ..|> BookInterface
+BookDecorator ..|> BookInterface
+BookDecorator o-- Book
+StatisticsBookDecorator --|> BookDecorator
+
+BorrowBookCommand ..|> Command
+ReturnBookCommand ..|> Command
+
+BookStatusObserver ..|> Observer
+
+TitleSearchStrategy ..|> SearchStrategy
+
+LibraryFacade --> Library
+LibraryFacade --> SearchStrategy
+Library --> StatisticsBookDecorator
+Library --> Command
+Library --> Observer
+
+@enduml

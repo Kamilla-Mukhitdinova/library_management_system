@@ -1,0 +1,49 @@
+@startuml Borrow Book Sequence
+
+actor Client
+participant LibraryFacade
+participant Library
+participant BorrowBookCommand
+participant Book
+participant BookStatusObserver
+
+Client -> LibraryFacade : borrowBook(isbn)
+activate LibraryFacade
+
+LibraryFacade -> Library : findBookByIsbn(isbn)
+activate Library
+Library --> LibraryFacade : book
+deactivate Library
+
+LibraryFacade -> BorrowBookCommand : new(book, library)
+activate BorrowBookCommand
+BorrowBookCommand --> LibraryFacade : command
+deactivate BorrowBookCommand
+
+LibraryFacade -> Library : executeCommand(command)
+activate Library
+
+Library -> BorrowBookCommand : execute()
+activate BorrowBookCommand
+
+BorrowBookCommand -> Book : setBorrowed(true)
+activate Book
+Book --> BorrowBookCommand
+deactivate Book
+
+BorrowBookCommand -> Library : notifyObservers(book)
+activate BookStatusObserver
+Library -> BookStatusObserver : update(book)
+BookStatusObserver --> Library
+deactivate BookStatusObserver
+
+BorrowBookCommand --> Library
+deactivate BorrowBookCommand
+
+Library --> LibraryFacade
+deactivate Library
+
+LibraryFacade --> Client : success
+deactivate LibraryFacade
+
+@enduml
